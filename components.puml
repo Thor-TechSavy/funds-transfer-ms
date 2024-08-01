@@ -1,0 +1,49 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+package "client" {
+[AccountClient]
+[CurrencyExchangeClient]
+}
+
+package "Dto" {
+  [RequestFundTransfer Dtos]
+}
+
+package "Controller" {
+  [FundsTransferController]
+}
+
+package "repository" {
+  [FundsTransfer Repository]
+}
+
+package "Service" {
+  [FundsTransfer Service]
+
+
+}
+
+database "FundsTransfer DB" {
+  folder "FundsTransferTransaction table" as transactions {
+    [Transactions 1, 2, ..]
+  }
+}
+
+Http -down-> [FundsTransferController]
+
+[FundsTransferController] -> [RequestFundTransfer Dtos]
+
+[FundsTransferController] --> [FundsTransfer Service]
+
+[FundsTransfer Service] -> [FundsTransfer Repository]
+
+[FundsTransfer Repository] -> [FundsTransfer DB]
+
+[FundsTransfer Service] --> [AccountClient]
+
+[AccountClient] --> account_ms : HTTP GET and HTTP PUT
+
+[FundsTransfer Service] --> [CurrencyExchangeClient] : call to external API
+
+@enduml

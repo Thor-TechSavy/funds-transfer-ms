@@ -1,4 +1,4 @@
-package org.quicktransfer;
+package com.quicktransfer;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
