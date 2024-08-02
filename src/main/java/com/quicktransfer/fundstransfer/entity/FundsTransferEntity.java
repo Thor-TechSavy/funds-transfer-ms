@@ -1,8 +1,9 @@
-package com.quicktransfer.microservice.fundstransfer.entity;
+package com.quicktransfer.fundstransfer.entity;
 
-import com.quicktransfer.microservice.fundstransfer.enums.FundsRequestStatus;
+import com.quicktransfer.fundstransfer.enums.FundsRequestStatus;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -14,13 +15,20 @@ public class FundsTransferEntity {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "txnId", nullable = false)
+    @Column(name = "requestId", nullable = false, unique = true)
     private final UUID fundsTransferRequestUUID = UUID.randomUUID();
 
-    @Column(name = "request", nullable = false)
-    private String request;
+    @Column(name = "fromOwnerId", nullable = false, unique = true)
+    private UUID fromOwnerID;
 
-    @Column(name = "txnId", nullable = false)
+    @Column(name = "toOwnerId", nullable = false, unique = true)
+    private UUID toOwnerID;
+
+    @Column(name = "amount", nullable = false)
+    private BigDecimal amount;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private FundsRequestStatus status;
 
     @Column(name = "creationTime", nullable = false)
@@ -33,24 +41,12 @@ public class FundsTransferEntity {
         return id;
     }
 
-    public String getRequest() {
-        return request;
-    }
-
-    public void setRequest(String request) {
-        this.request = request;
-    }
-
     public UUID getFundsTransferRequestUUID() {
         return fundsTransferRequestUUID;
     }
 
     public FundsRequestStatus getStatus() {
         return status;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public void setStatus(FundsRequestStatus status) {
@@ -67,6 +63,30 @@ public class FundsTransferEntity {
 
     public void setLastUpdateTime(Instant lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public UUID getFromOwnerID() {
+        return fromOwnerID;
+    }
+
+    public void setFromOwnerID(UUID fromOwnerID) {
+        this.fromOwnerID = fromOwnerID;
+    }
+
+    public UUID getToOwnerID() {
+        return toOwnerID;
+    }
+
+    public void setToOwnerID(UUID toOwnerID) {
+        this.toOwnerID = toOwnerID;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
     }
 
     // hash and equals

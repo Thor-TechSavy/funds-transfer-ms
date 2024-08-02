@@ -1,9 +1,9 @@
-package com.quicktransfer.microservice.fundstransfer.controller;
+package com.quicktransfer.fundstransfer.controller;
 
-import com.quicktransfer.microservice.fundstransfer.dto.FundsTransferRequestDto;
-import com.quicktransfer.microservice.fundstransfer.dto.FundsTransferResponseDto;
-import com.quicktransfer.microservice.fundstransfer.entity.FundsTransferEntity;
-import com.quicktransfer.microservice.fundstransfer.service.FundsTransferService;
+import com.quicktransfer.fundstransfer.dto.FundsTransferRequestDto;
+import com.quicktransfer.fundstransfer.dto.FundsTransferResponseDto;
+import com.quicktransfer.fundstransfer.entity.FundsTransferEntity;
+import com.quicktransfer.fundstransfer.service.FundsTransferService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

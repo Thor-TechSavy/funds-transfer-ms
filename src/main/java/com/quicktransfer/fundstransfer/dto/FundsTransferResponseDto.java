@@ -1,6 +1,6 @@
-package com.quicktransfer.microservice.fundstransfer.dto;
+package com.quicktransfer.fundstransfer.dto;
 
-import com.quicktransfer.microservice.fundstransfer.enums.FundsRequestStatus;
+import com.quicktransfer.fundstransfer.enums.FundsRequestStatus;
 
 import java.util.UUID;
 

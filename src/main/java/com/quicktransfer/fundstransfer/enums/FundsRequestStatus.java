@@ -1,4 +1,4 @@
-package com.quicktransfer.microservice.fundstransfer.enums;
+package com.quicktransfer.fundstransfer.enums;
 
 public enum FundsRequestStatus {
 
