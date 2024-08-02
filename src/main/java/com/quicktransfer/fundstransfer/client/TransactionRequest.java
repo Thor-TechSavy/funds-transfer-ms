@@ -8,9 +8,7 @@ public class TransactionRequest {
     private UUID fromOwnerId;
     private UUID toOwnerId;
     private BigDecimal amount;
-    private String calleeName;
-    private String transferRequestCreationTime;
-    private UUID transferRequestUUID;
+    private RequestIdentifier requestIdentifier;
 
     public UUID getFromOwnerId() {
         return fromOwnerId;
@@ -36,27 +34,11 @@ public class TransactionRequest {
         this.amount = amount;
     }
 
-    public String getCalleeName() {
-        return calleeName;
+    public RequestIdentifier getRequestIdentifier() {
+        return requestIdentifier;
     }
 
-    public void setCalleeName(String calleeName) {
-        this.calleeName = calleeName;
-    }
-
-    public String getTransferRequestCreationTime() {
-        return transferRequestCreationTime;
-    }
-
-    public void setTransferRequestCreationTime(String transferRequestCreationTime) {
-        this.transferRequestCreationTime = transferRequestCreationTime;
-    }
-
-    public UUID getTransferRequestUUID() {
-        return transferRequestUUID;
-    }
-
-    public void setTransferRequestUUID(UUID transferRequestUUID) {
-        this.transferRequestUUID = transferRequestUUID;
+    public void setRequestIdentifier(RequestIdentifier requestIdentifier) {
+        this.requestIdentifier = requestIdentifier;
     }
 }

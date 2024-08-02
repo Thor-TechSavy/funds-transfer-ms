@@ -27,6 +27,9 @@ public class FundsTransferEntity {
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "requestIdentifier", nullable = false)
+    private String requestIdentifier;
+
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private FundsRequestStatus status;
@@ -87,6 +90,18 @@ public class FundsTransferEntity {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getRequestIdentifier() {
+        return requestIdentifier;
+    }
+
+    public void setRequestIdentifier(String requestIdentifier) {
+        this.requestIdentifier = requestIdentifier;
     }
 
     // hash and equals

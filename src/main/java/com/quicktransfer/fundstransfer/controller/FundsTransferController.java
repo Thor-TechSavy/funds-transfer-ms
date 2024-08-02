@@ -27,7 +27,7 @@ public class FundsTransferController {
         FundsTransferEntity entity = fundsTransferService.createFundsTransferRequest(requestDto);
 
         FundsTransferResponseDto responseDto = new FundsTransferResponseDto();
-        responseDto.setRequest(entity.getRequest());
+        responseDto.setRequest(entity.getRequestIdentifier());
         responseDto.setStatus(entity.getStatus());
         responseDto.setFundsTransferRequestUUID(entity.getFundsTransferRequestUUID());
 
