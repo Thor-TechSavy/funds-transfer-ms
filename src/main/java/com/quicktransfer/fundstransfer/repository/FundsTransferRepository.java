@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface FundsTransferRepository extends JpaRepository<FundsTransferEntity, Long> {
@@ -19,4 +20,6 @@ public interface FundsTransferRepository extends JpaRepository<FundsTransferEnti
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     List<FundsTransferEntity> findByStatusAndCreationTimeAfterOrderByCreationTimeAsc(FundsRequestStatus status, Instant creationTime);
+
+    Optional<FundsTransferEntity> findByFundsTransferRequestUUID(UUID uuid);
 }

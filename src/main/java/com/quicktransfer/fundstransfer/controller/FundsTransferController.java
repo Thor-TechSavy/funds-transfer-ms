@@ -3,14 +3,20 @@ package com.quicktransfer.fundstransfer.controller;
 import com.quicktransfer.fundstransfer.dto.FundsTransferRequestDto;
 import com.quicktransfer.fundstransfer.dto.FundsTransferResponseDto;
 import com.quicktransfer.fundstransfer.entity.FundsTransferEntity;
-import com.quicktransfer.fundstransfer.enums.FundsRequestStatus;
 import com.quicktransfer.fundstransfer.service.FundsTransferService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
+
+import static com.quicktransfer.fundstransfer.mapper.FundsTransferMapper.mapToDto;
+import static com.quicktransfer.fundstransfer.mapper.FundsTransferMapper.mapToEntity;
 
 @RestController
 @RequestMapping("/v1/funds-transfer")
@@ -22,27 +28,37 @@ public class FundsTransferController {
         this.fundsTransferService = fundsTransferService;
     }
 
-    @PostMapping
+    @Operation(summary = "To create/initiate the funds transfer requests between the accounts")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "funds transfer request created", content =
+                    {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FundsTransferResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "invalid request payload", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server error, the details are logged on "
+                    + "backend", content = @Content)})
+    @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<FundsTransferResponseDto> createFundsTransferRequest(@RequestBody FundsTransferRequestDto requestDto) {
 
         FundsTransferEntity fundsTransferEntity = mapToEntity(requestDto);
-
         FundsTransferEntity entity = fundsTransferService.createFundsTransferRequest(fundsTransferEntity);
 
-        FundsTransferResponseDto responseDto = new FundsTransferResponseDto();
-        responseDto.setRequestIdentifier(entity.getRequestIdentifier());
-        responseDto.setStatus(entity.getStatus());
-        responseDto.setFundsTransferRequestUUID(entity.getFundsTransferRequestUUID());
-
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(mapToDto(entity), HttpStatus.CREATED);
     }
 
-    private static FundsTransferEntity mapToEntity(FundsTransferRequestDto requestDto) {
-        FundsTransferEntity fundsTransferEntity = new FundsTransferEntity();
-        fundsTransferEntity.setAmount(requestDto.getAmount());
-        fundsTransferEntity.setFromOwnerID(requestDto.getFromOwnerId());
-        fundsTransferEntity.setToOwnerID(requestDto.getToOwnerId());
-        fundsTransferEntity.setStatus(FundsRequestStatus.PENDING);
-        return fundsTransferEntity;
+    @Operation(summary = "To retrieve the request by request UUID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "funds transfer request fetched successfully", content =
+                    {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = FundsTransferResponseDto.class))}),
+            @ApiResponse(responseCode = "400", description = "invalid request payload", content = @Content),
+            @ApiResponse(responseCode = "404", description = "not found", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server error, the details are logged on "
+                    + "backend", content = @Content)})
+    @GetMapping(value = "/{uuid}", produces = "application/json")
+    public ResponseEntity<FundsTransferResponseDto> getFundsTransferRequest(@PathVariable UUID uuid) {
+        FundsTransferEntity entity = fundsTransferService.getFundsTransferRequest(uuid);
+
+        return new ResponseEntity<>(mapToDto(entity), HttpStatus.OK);
+
     }
 }

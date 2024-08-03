@@ -5,34 +5,32 @@ import com.quicktransfer.fundstransfer.client.AccountClient;
 import com.quicktransfer.fundstransfer.client.RequestIdentifier;
 import com.quicktransfer.fundstransfer.client.TransactionRequest;
 import com.quicktransfer.fundstransfer.client.TransactionResponse;
-import com.quicktransfer.fundstransfer.dto.FundsTransferRequestDto;
+import com.quicktransfer.fundstransfer.config.FundsTransferProperties;
 import com.quicktransfer.fundstransfer.entity.FundsTransferEntity;
 import com.quicktransfer.fundstransfer.enums.FundsRequestStatus;
 import com.quicktransfer.fundstransfer.exception.FundsTransferException;
 import com.quicktransfer.fundstransfer.repository.FundsTransferRepository;
 import com.quicktransfer.fundstransfer.util.JsonUtil;
 import feign.FeignException;
-import org.apache.coyote.BadRequestException;
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
-
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.c;
+import java.util.UUID;
 
 @Service
 public class FundsTransferService {
 
     private final AccountClient accountClient;
     private final FundsTransferRepository fundsTransferRepository;
+    private final FundsTransferProperties properties;
 
     public FundsTransferService(AccountClient accountClient,
-                                FundsTransferRepository fundsTransferRepository) {
+                                FundsTransferRepository fundsTransferRepository, FundsTransferProperties properties) {
         this.accountClient = accountClient;
         this.fundsTransferRepository = fundsTransferRepository;
+        this.properties = properties;
     }
 
 
@@ -45,7 +43,12 @@ public class FundsTransferService {
 
     }
 
-    public List<FundsTransferEntity> findFirst10ByStatusOrderByCreationTimeAsc(FundsRequestStatus status) {
+    public FundsTransferEntity getFundsTransferRequest(UUID uuid) {
+        return fundsTransferRepository.findByFundsTransferRequestUUID(uuid)
+                .orElseThrow(() -> new FundsTransferException("request doesn't exists for uuid: " + uuid));
+    }
+
+    public List<FundsTransferEntity> getTop10OldestByStatus(FundsRequestStatus status) {
         return fundsTransferRepository.findFirst10ByStatusOrderByCreationTimeAsc(status);
     }
 
@@ -65,12 +68,12 @@ public class FundsTransferService {
     public List<FundsTransferEntity> getFundsTransferEntitiesForLastNMinutes() {
         return fundsTransferRepository
                 .findByStatusAndCreationTimeAfterOrderByCreationTimeAsc(FundsRequestStatus.PROCESSING,
-                        Instant.now().minusSeconds(600));
+                        Instant.now().minusSeconds(Long.parseLong(properties.getFetchLastSeconds())));
     }
 
-    public FundsTransferEntity update(FundsTransferEntity entity) {
+    public void update(FundsTransferEntity entity) {
         entity.setLastUpdateTime(Instant.now());
-        return fundsTransferRepository.save(entity);
+        fundsTransferRepository.save(entity);
     }
 
     @Transactional
@@ -89,8 +92,7 @@ public class FundsTransferService {
             //
         } catch (FundsTransferException e) {
             requestEntity.setStatus(FundsRequestStatus.FAILED);
-        }
-        finally {
+        } finally {
             update(requestEntity);
         }
 
@@ -111,7 +113,7 @@ public class FundsTransferService {
             throw new FundsTransferException(e.getMessage());
         }
 
-
         return transactionRequest;
     }
+
 }

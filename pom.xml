@@ -34,6 +34,7 @@
         <com.fasterxml.jackson.core.version>2.17.2</com.fasterxml.jackson.core.version>
         <shedlock-spring.version>5.12.0</shedlock-spring.version>
         <shedlock-provider-jdbc-template.version>5.12.0</shedlock-provider-jdbc-template.version>
+        <springdoc-openapi.version>2.5.0</springdoc-openapi.version>
     </properties>
 
     <dependencyManagement>
@@ -70,17 +71,17 @@
             <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
-                <dependency>
-                    <groupId>io.github.openfeign.form</groupId>
-                    <artifactId>feign-form</artifactId>
-                    <version>${io.github.openfeign.form.version}</version>
-                </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form</artifactId>
+            <version>${io.github.openfeign.form.version}</version>
+        </dependency>
 
-                <dependency>
-                    <groupId>io.github.openfeign.form</groupId>
-                    <artifactId>feign-form-spring</artifactId>
-                    <version>${io.github.openfeign.form.version}</version>
-                </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+            <version>${io.github.openfeign.form.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>net.javacrumbs.shedlock</groupId>
@@ -92,6 +93,12 @@
             <groupId>net.javacrumbs.shedlock</groupId>
             <artifactId>shedlock-provider-jdbc-template</artifactId>
             <version>${shedlock-provider-jdbc-template.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc-openapi.version}</version>
         </dependency>
 
         <dependency>
@@ -109,7 +116,24 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+                <configuration>
+                    <delimiters>
+                        <delimiter>@</delimiter>
+                    </delimiters>
+                    <useDefaultDelimiters>false</useDefaultDelimiters>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
