@@ -10,7 +10,7 @@ public class FundsTransferResponseDto {
 
     private UUID fundsTransferRequestUUID;
 
-    private String request;
+    private String requestIdentifier;
 
     public FundsRequestStatus getStatus() {
         return status;
@@ -28,11 +28,11 @@ public class FundsTransferResponseDto {
         this.fundsTransferRequestUUID = fundsTransferRequestUUID;
     }
 
-    public String getRequest() {
-        return request;
+    public String getRequestIdentifier() {
+        return requestIdentifier;
     }
 
-    public void setRequest(String request) {
-        this.request = request;
+    public void setRequestIdentifier(String requestIdentifier) {
+        this.requestIdentifier = requestIdentifier;
     }
 }

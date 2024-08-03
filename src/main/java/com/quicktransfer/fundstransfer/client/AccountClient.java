@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.*;
 public interface AccountClient {
 
     @PostMapping("/transaction")
-    void performDebitAndCreditOperations(@RequestBody TransactionRequest transactionDto);
+    TransactionResponse performDebitAndCreditOperations(@RequestBody TransactionRequest transactionDto);
 
 }

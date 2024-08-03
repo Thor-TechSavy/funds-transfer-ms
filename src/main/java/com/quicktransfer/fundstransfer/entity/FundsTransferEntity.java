@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
+@Table(name = "FUNDS_TRANSFER_REQUEST")
 public class FundsTransferEntity {
 
     @Id

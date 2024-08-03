@@ -1,20 +1,17 @@
 package com.quicktransfer.fundstransfer.config;
 
+import com.quicktransfer.fundstransfer.util.FeignErrorDecoder;
+import feign.codec.ErrorDecoder;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableFeignClients({"com.quicktransfer.fundstransfer.client"})
 public class FeignConfig {
 
-
-//    @Bean
-//    public Encoder multipartFormEncoder() {
-//        return new SpringFormEncoder(new SpringEncoder(() -> new HttpMessageConverters(new RestTemplate().getMessageConverters())));
-//    }
-
-//    @Bean
-//    public FeignErrorDecoder customErrorDecoder() {
-//        return new FeignErrorDecoder();
-//    }
+    @Bean
+    public ErrorDecoder errorDecoder() {
+        return new FeignErrorDecoder();
+    }
 }
