@@ -3,11 +3,11 @@
 
 package "client" {
 [AccountClient]
-[CurrencyExchangeClient]
 }
 
 package "Dto" {
-  [RequestFundTransfer Dtos]
+  [FundsTransferResponseDto]
+  [FundsTransferRequestDto]
 }
 
 package "Controller" {
@@ -15,35 +15,39 @@ package "Controller" {
 }
 
 package "repository" {
-  [FundsTransfer Repository]
+  [FundsTransferRepository]
 }
 
 package "Service" {
-  [FundsTransfer Service]
-
-
+  [FundsTransferService]
 }
 
-database "FundsTransfer DB" {
-  folder "FundsTransferTransaction table" as transactions {
-    [Transactions 1, 2, ..]
+package "Scheduler" as Scheduler {
+    [pendingRequests]
+    [stalledRequests]
+}
+
+database "FundsTransferRequestDB" {
+  folder "transferRequest" as transferRequest {
+    [transferRequest 1, 2, ..]
   }
 }
 
-Http -down-> [FundsTransferController]
+Http --> [FundsTransferController]
 
-[FundsTransferController] -> [RequestFundTransfer Dtos]
+[FundsTransferController] --> [FundsTransferRequestDto]
 
-[FundsTransferController] --> [FundsTransfer Service]
+[FundsTransferController] -> [FundsTransferService] : createFundsTransferRequest
 
-[FundsTransfer Service] -> [FundsTransfer Repository]
+[FundsTransferService] -> [FundsTransferRepository]
 
-[FundsTransfer Repository] -> [FundsTransfer DB]
+[FundsTransferRepository] -> transferRequest
 
-[FundsTransfer Service] --> [AccountClient]
+[pendingRequests] --> [AccountClient] : update the\n request status
+[stalledRequests] --> [AccountClient] : update the\n request status
 
-[AccountClient] --> account_ms : HTTP GET and HTTP PUT
+Scheduler -> transferRequest
 
-[FundsTransfer Service] --> [CurrencyExchangeClient] : call to external API
+[AccountClient] -> account_service : HTTP POST
 
 @enduml

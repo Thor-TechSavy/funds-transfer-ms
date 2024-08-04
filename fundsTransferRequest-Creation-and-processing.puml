@@ -1,0 +1,76 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+'Natural person professional description creation
+
+autonumber
+
+actor initiator as "Natural Person or Machine"
+control fundstransferms as "funds-transfer-ms"
+database fundsTransferRequestDb
+control accountms as "Account-ms"
+database accountdb
+control currencyexchangeapi as "Currency Exchange API"
+note over of currencyexchangeapi : used for currency exchange. \n could be any 3rd party api
+
+group funds-transfer-request
+note over of fundstransferms : the response of the fund transfer POST request\n is of synchronous nature and the initiator immediately receives \n the response with PENDING status. The request is processed asynchronously.\n Hence, availability is not reduced to the initiator in the event of\n non-working of some the collaborators like exchange api, etc
+
+
+note over of initiator: request payload to create \n fund transfer request must have\n firstName, lastName, dob, currency
+initiator -> fundstransferms : send POST HTTP **/funds-transfer** request \n to create funds-transfer-request
+fundstransferms -> fundstransferms : request payload validation
+fundstransferms -> fundstransferms : creates fundsTransferEntity & \n updates the entity with PENDING status, \n fundsTransferRequestDb uuid
+fundstransferms -> fundsTransferRequestDb: save the fundsTransferEntity
+fundstransferms -> fundstransferms : map the entity to dto
+fundstransferms -> initiator : returns the fundsTransferResponseDto
+end group
+
+group Asynchronous
+
+note over of fundstransferms: Cron job to handlePendingRequest which runs every N minutes
+group handlePendingRequest_Scheduler
+
+fundstransferms -> fundsTransferRequestDb : fetch the top 10 request entities \n with PENDING status in ascending order
+fundstransferms -> fundstransferms: updates the requestEntity status to PROCESSING
+fundstransferms -> accountms : HTTP POST request with payload to perform debit & credit operation
+opt if account ms is not reachable
+        note over of fundstransferms: retry few times \nbefore throwing an\n exception
+end opt
+
+accountms -> accountms : request payload validation,\n account existence validation,\n insufficient balance validation
+
+group if validated successfully
+accountms -> accountms: Transaction creation with info like \ntxn amount, fromOwnerId, toOwnerId,\n transactionId, requestIdentifier
+accountms -> accountdb: save the Transaction with PROCESSING status
+
+accountms -> currencyexchangeapi : HTTP GET request to retrieve currency exchange rate
+currencyexchangeapi --> accountms : returns currency exchange rate
+
+opt if exchange api is not reachable
+        note over of accountms: retry few times \nbefore throwing an\n exception
+end opt
+accountms -> accountms: perform requested debit and credit operation
+accountms -> accountdb: update and save the Transaction with SUCCESSFUL status
+
+accountms --> fundstransferms : returns the response
+else not validated
+accountms --> fundstransferms : bad request
+end group
+
+fundstransferms -> fundstransferms: updates the requestEntity status \n as the status (SUCCESSFUL, FAILED) in the response
+fundstransferms -> fundsTransferRequestDb: save the updated request entity
+end group
+
+note over of fundstransferms: Cron job to handleStalledRequest which runs every N minutes
+group handleStalledFundsTransferRequest_Scheduler
+
+fundstransferms -> fundsTransferRequestDb : fetch the request entities for last 10 minutes \n with PROCESSING status in ascending order
+note over of fundstransferms: for the scenarios when the funds transfer ms doesn't receive the response for \n the requested Transaction performed by account ms, this job will re-check whether the Transaction\n is successfully processed for the given transaction request identifier and process it in case if it doesn't processed\n correctly in the first place. Once the response is obtained for the transaction, the FundsTransferRequest status is updated.
+end group
+
+end group
+
+initiator -> fundstransferms : HTTP GET /funds-transfer/{uuid} check the request status using the ID periodically or by polling
+fundstransferms --> initiator : returns the request details
+
+@enduml
