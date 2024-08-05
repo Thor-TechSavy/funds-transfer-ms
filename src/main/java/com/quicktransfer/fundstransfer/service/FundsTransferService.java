@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.quicktransfer.fundstransfer.client.AccountClient;
 import com.quicktransfer.fundstransfer.client.RequestIdentifier;
 import com.quicktransfer.fundstransfer.client.TransactionRequest;
-import com.quicktransfer.fundstransfer.client.TransactionResponse;
 import com.quicktransfer.fundstransfer.config.FundsTransferProperties;
 import com.quicktransfer.fundstransfer.entity.FundsTransferEntity;
 import com.quicktransfer.fundstransfer.enums.FundsRequestStatus;
@@ -45,9 +44,9 @@ public class FundsTransferService {
      *                            of the transfer request to be created.
      * @return the persisted {@code FundsTransferEntity} with the assigned request identifier.
      */
-    public FundsTransferEntity createFundsTransferRequest(FundsTransferEntity fundsTransferEntity) {
+    public FundsTransferEntity createFundsTransferRequest(final FundsTransferEntity fundsTransferEntity) {
 
-        String requestIdentifier = createRequestIdentifier(fundsTransferEntity);
+        var requestIdentifier = createRequestIdentifier(fundsTransferEntity);
         fundsTransferEntity.setRequestIdentifier(requestIdentifier);
 
         return fundsTransferRepository.save(fundsTransferEntity);
@@ -65,7 +64,7 @@ public class FundsTransferService {
      * @return the {@code FundsTransferEntity} corresponding to the given UUID.
      * @throws FundsTransferException if no funds transfer request exists for the given UUID.
      */
-    public FundsTransferEntity getFundsTransferRequest(UUID uuid) {
+    public FundsTransferEntity getFundsTransferRequest(final UUID uuid) {
         return fundsTransferRepository.findByFundsTransferRequestUUID(uuid)
                 .orElseThrow(() -> new FundsTransferException("request doesn't exists for uuid: " + uuid));
     }
@@ -79,7 +78,7 @@ public class FundsTransferService {
      * @param status the status of the funds transfer requests to be retrieved.
      * @return a list of the top 10 oldest {@code FundsTransferEntity} with the specified status.
      */
-    public List<FundsTransferEntity> getTop10OldestByStatus(FundsRequestStatus status) {
+    public List<FundsTransferEntity> getTop10OldestByStatus(final FundsRequestStatus status) {
         return fundsTransferRepository.findFirst10ByStatusOrderByCreationTimeAsc(status);
     }
 
@@ -93,8 +92,8 @@ public class FundsTransferService {
      * @return a JSON string representing the unique request identifier.
      * @throws FundsTransferException if there is an error during the serialization process.
      */
-    private static String createRequestIdentifier(FundsTransferEntity fundsTransferEntity) {
-        RequestIdentifier identifier = new RequestIdentifier();
+    private static String createRequestIdentifier(final FundsTransferEntity fundsTransferEntity) {
+        var identifier = new RequestIdentifier();
         identifier.setCalleeName(FUND_MS);
         identifier.setRequestTime(String.valueOf(fundsTransferEntity.getCreationTime()));
         identifier.setTransferRequestId(fundsTransferEntity.getFundsTransferRequestUUID());
@@ -135,7 +134,7 @@ public class FundsTransferService {
      * @param entity the {@code FundsTransferEntity} to be updated. It must be an existing entity with a valid ID.
      *               The {@code lastUpdateTime} field of this entity will be updated to the current time.
      */
-    public void update(FundsTransferEntity entity) {
+    public void update(final FundsTransferEntity entity) {
         entity.setLastUpdateTime(Instant.now());
         fundsTransferRepository.save(entity);
     }
@@ -154,14 +153,14 @@ public class FundsTransferService {
      * @param requestEntity the {@code FundsTransferEntity} to be processed. This entity should have a valid ID and initial status.
      */
     @Transactional
-    public void processTransferRequest(FundsTransferEntity requestEntity) {
+    public void processTransferRequest(final FundsTransferEntity requestEntity) {
 
-        TransactionRequest transactionRequest = mapToRequest(requestEntity);
+        var transactionRequest = mapToRequest(requestEntity);
         requestEntity.setStatus(FundsRequestStatus.PROCESSING);
         try {
-            TransactionResponse response = accountClient.performDebitAndCreditOperations(transactionRequest);
+            var response = accountClient.performDebitAndCreditOperations(transactionRequest);
 
-            FundsRequestStatus newStatus = response.getTransactionStatus();
+            var newStatus = response.getTransactionStatus();
 
             requestEntity.setStatus(newStatus);
 
@@ -186,7 +185,7 @@ public class FundsTransferService {
      * @return a {@code TransactionRequest} with values mapped from the provided {@code FundsTransferEntity}.
      * @throws FundsTransferException if there is an error processing the JSON request identifier.
      */
-    private TransactionRequest mapToRequest(FundsTransferEntity requestEntity) {
+    private TransactionRequest mapToRequest(final FundsTransferEntity requestEntity) {
         TransactionRequest transactionRequest = new TransactionRequest();
 
         transactionRequest.setAmount(requestEntity.getAmount());

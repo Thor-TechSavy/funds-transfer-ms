@@ -10,17 +10,17 @@ public class FundsTransferMapper {
     private FundsTransferMapper() {
     }
 
-    public static FundsTransferResponseDto mapToDto(FundsTransferEntity entity) {
+    public static FundsTransferResponseDto mapToDto(final FundsTransferEntity entity) {
 
-        FundsTransferResponseDto responseDto = new FundsTransferResponseDto();
+        var responseDto = new FundsTransferResponseDto();
         responseDto.setRequestIdentifier(entity.getRequestIdentifier());
         responseDto.setStatus(entity.getStatus());
         responseDto.setFundsTransferRequestUUID(entity.getFundsTransferRequestUUID());
 
         return responseDto;
     }
-    public static FundsTransferEntity mapToEntity(FundsTransferRequestDto requestDto) {
-        FundsTransferEntity fundsTransferEntity = new FundsTransferEntity();
+    public static FundsTransferEntity mapToEntity(final FundsTransferRequestDto requestDto) {
+        var fundsTransferEntity = new FundsTransferEntity();
         fundsTransferEntity.setAmount(requestDto.getAmount());
         fundsTransferEntity.setFromOwnerID(requestDto.getFromOwnerId());
         fundsTransferEntity.setToOwnerID(requestDto.getToOwnerId());

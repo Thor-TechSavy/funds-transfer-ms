@@ -2,7 +2,6 @@ package com.quicktransfer.fundstransfer.controller;
 
 import com.quicktransfer.fundstransfer.dto.FundsTransferRequestDto;
 import com.quicktransfer.fundstransfer.dto.FundsTransferResponseDto;
-import com.quicktransfer.fundstransfer.entity.FundsTransferEntity;
 import com.quicktransfer.fundstransfer.exception.FundsTransferException;
 import com.quicktransfer.fundstransfer.service.FundsTransferService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,11 +37,16 @@ public class FundsTransferController {
             @ApiResponse(responseCode = "500", description = "Internal Server error, the details are logged on "
                     + "backend", content = @Content)})
     @PostMapping(consumes = "application/json", produces = "application/json")
-    public ResponseEntity<FundsTransferResponseDto> createFundsTransferRequest(@RequestBody FundsTransferRequestDto requestDto) {
+    public ResponseEntity<FundsTransferResponseDto> createFundsTransferRequest(@RequestBody final FundsTransferRequestDto requestDto) {
 
-        validateFundsTransferRequest(requestDto);
-        FundsTransferEntity fundsTransferEntity = mapToEntity(requestDto);
-        FundsTransferEntity entity = fundsTransferService.createFundsTransferRequest(fundsTransferEntity);
+        try {
+            validateFundsTransferRequest(requestDto);
+        } catch (FundsTransferException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        var fundsTransferEntity = mapToEntity(requestDto);
+        var entity = fundsTransferService.createFundsTransferRequest(fundsTransferEntity);
 
         return new ResponseEntity<>(mapToDto(entity), HttpStatus.CREATED);
     }
@@ -57,17 +61,17 @@ public class FundsTransferController {
             @ApiResponse(responseCode = "500", description = "Internal Server error, the details are logged on "
                     + "backend", content = @Content)})
     @GetMapping(value = "/{uuid}", produces = "application/json")
-    public ResponseEntity<FundsTransferResponseDto> getFundsTransferRequest(@PathVariable UUID uuid) {
-        FundsTransferEntity entity = fundsTransferService.getFundsTransferRequest(uuid);
+    public ResponseEntity<FundsTransferResponseDto> getFundsTransferRequest(@PathVariable final UUID uuid) {
+        var entity = fundsTransferService.getFundsTransferRequest(uuid);
 
         return new ResponseEntity<>(mapToDto(entity), HttpStatus.OK);
 
     }
 
     private void validateFundsTransferRequest(final FundsTransferRequestDto request) {
-        boolean isAmountNull = request.getAmount() == null;
-        boolean isFromOwnerId = request.getFromOwnerId() == null;
-        boolean isToOwnerId = request.getToOwnerId() == null;
+        var isAmountNull = request.getAmount() == null;
+        var isFromOwnerId = request.getFromOwnerId() == null;
+        var isToOwnerId = request.getToOwnerId() == null;
 
         if (isAmountNull || isFromOwnerId || isToOwnerId) {
             throw new FundsTransferException("Invalid request");

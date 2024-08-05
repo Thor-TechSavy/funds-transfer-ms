@@ -8,8 +8,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Component
 public class FundsTransferRequestHandler {
 
@@ -40,10 +38,10 @@ public class FundsTransferRequestHandler {
     @Transactional
     @Scheduled(cron = "${fundstransfer.pending-requests-scheduler}")
     @SchedulerLock(name = "fundsProcessor_scheduledTask",
-            lockAtLeastFor = "PT5M", lockAtMostFor = "PT15M")
+            lockAtMostFor = "PT3M")
     public void handlePendingFundsTransferRequests() {
 
-        List<FundsTransferEntity> requestEntities = fundsTransferService
+        var requestEntities = fundsTransferService
                 .getTop10OldestByStatus(FundsRequestStatus.PENDING);
 
         if (requestEntities.isEmpty()) {
@@ -80,7 +78,7 @@ public class FundsTransferRequestHandler {
             lockAtMostFor = "PT10M")
     public void handleStalledFundsTransferRequests() {
 
-        List<FundsTransferEntity> requestEntities = fundsTransferService.getFundsTransferEntitiesForLastNMinutes();
+        var requestEntities = fundsTransferService.getFundsTransferEntitiesForLastNMinutes();
 
         if (requestEntities.isEmpty()) {
             return;

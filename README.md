@@ -92,19 +92,24 @@ AccountClient: Communicates with the external account service to update the requ
 6. ### Swagger Information
     - Swagger UI: http://localhost:9001/swagger-ui.html
     - OpenApi Json: http://localhost:9001/v3/api-docs
-
+7. IN MEMORY H2 DB
+    - link: http://localhost:9001/h2-console/login.jsp
+    - Jdbc url: jdbc:h2:mem:fundstransferdb 
 ## Languages and Framework
 
 - java 17, spring-boot, junit, jackson, slf4j, mockito
 
 ## Assumptions
  
-1. persists the entities in in-memory h2 db.
-2. The fund transfer request creation is synchronous operation to improve the response availability.
-3. The end user can wait for the processing of the fund transfer request as it is handled asynchronously
-4. The cron jobs uses shedlock, which ensures that only one instance of the job runs in a distributed environment at a given time.
-5. Cron jobs runs every two minutes to process the pending requests once they are created.
-6. Use pessimistic locking to ensure data consistency in concurrent environment.
+1. the request is created with PENDING status.
+2. The cron job changes the status to PROCESSING.
+3. The request status is changed to SUCCESSFUL or FAILED status based upon the response of the processing in the account-ms.
+4. persists the entities in in-memory h2 db.
+5. The fund transfer request creation is synchronous operation to improve the response availability.
+6. The end user can wait for the processing of the fund transfer request as it is handled asynchronously
+7. The cron jobs uses shedlock, which ensures that only one instance of the job runs in a distributed environment at a given time.
+8. Cron jobs runs every two minutes to process the pending requests once they are created.
+9. Use pessimistic locking to ensure data consistency in concurrent environment.
 
 ## Tests and output
 
