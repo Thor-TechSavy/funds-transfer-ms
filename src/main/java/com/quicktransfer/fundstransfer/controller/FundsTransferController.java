@@ -53,7 +53,7 @@ public class FundsTransferController {
 
     @Operation(summary = "To retrieve the request by request UUID")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "funds transfer request fetched successfully", content =
+            @ApiResponse(responseCode = "200", description = "funds transfer request fetched successfully", content =
                     {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = FundsTransferResponseDto.class))}),
             @ApiResponse(responseCode = "400", description = "invalid request payload", content = @Content),

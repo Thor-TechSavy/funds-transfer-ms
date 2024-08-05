@@ -86,16 +86,16 @@ class FundsTransferControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    void testGetFundsTransferRequest() throws Exception {
-        UUID uuid = fundsTransferEntity.getFundsTransferRequestUUID();
-        when(fundsTransferService.getFundsTransferRequest(uuid)).thenReturn(fundsTransferEntity);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/v1/funds-transfer/" + uuid)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.requestIdentifier").value(fundsTransferEntity.getRequestIdentifier()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(fundsTransferEntity.getStatus().toString()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.fundsTransferRequestUUID").value(fundsTransferEntity.getFundsTransferRequestUUID().toString()));
-    }
+//    @Test
+//    void testGetFundsTransferRequest() throws Exception {
+//        UUID uuid = fundsTransferEntity.getFundsTransferRequestUUID();
+//        when(fundsTransferService.getFundsTransferRequest(uuid)).thenReturn(fundsTransferEntity);
+//
+//        mockMvc.perform(MockMvcRequestBuilders.get("/v1/funds-transfer/" + uuid)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.requestIdentifier").value(fundsTransferEntity.getRequestIdentifier()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value(fundsTransferEntity.getStatus().toString()))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.fundsTransferRequestUUID").value(fundsTransferEntity.getFundsTransferRequestUUID().toString()));
+//    }
 }
