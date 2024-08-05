@@ -44,7 +44,8 @@ handle pending and stalled requests and communicates with an external account se
 
 ##### Database
 - FundsTransferRequestDB: Stores transfer requests. It contains transferRequest entries, each representing a fund transfer request.
-
+![img_6.png](img_6.png)
+- 
 ##### Scheduler
 
 - handlePendingFundsTransferRequests: Processes pending transfer requests, ensuring they are handled promptly.
@@ -54,7 +55,7 @@ handle pending and stalled requests and communicates with an external account se
 
 AccountClient: Communicates with the external account service to update the request status. It uses HTTP POST to send updates to the account service.
 
-- Flow
+##### Flow
 ![img_3.png](img_3.png)
 
 ## Installation
@@ -132,6 +133,7 @@ RESPONSE:
 }
 
 ```
+![img_5.png](img_5.png)
 
 2. How to fetch the funds transfer request?
 ```text

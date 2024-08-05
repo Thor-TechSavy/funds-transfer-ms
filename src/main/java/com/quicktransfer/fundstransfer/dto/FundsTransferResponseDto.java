@@ -35,4 +35,13 @@ public class FundsTransferResponseDto {
     public void setRequestIdentifier(String requestIdentifier) {
         this.requestIdentifier = requestIdentifier;
     }
+
+    @Override
+    public String toString() {
+        return "FundsTransferResponseDto{" +
+                "status=" + status +
+                ", fundsTransferRequestUUID=" + fundsTransferRequestUUID +
+                ", requestIdentifier='" + requestIdentifier + '\'' +
+                '}';
+    }
 }

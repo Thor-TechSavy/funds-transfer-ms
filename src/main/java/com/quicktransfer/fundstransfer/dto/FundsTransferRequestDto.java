@@ -39,4 +39,13 @@ public class FundsTransferRequestDto {
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString() {
+        return "FundsTransferRequestDto{" +
+                "fromOwnerId=" + fromOwnerId +
+                ", toOwnerId=" + toOwnerId +
+                ", amount=" + amount +
+                '}';
+    }
 }
