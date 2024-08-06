@@ -72,7 +72,7 @@ AccountClient: Communicates with the external account service to update the requ
 1. configure the jdk - 17, in case you want to use another version, please make the necessary changes to
    java.version in parent pom.xml
 
-2. Switch to develop branch. There are a couple of feature branches starting with feature/101 too.
+2. Switch to main branch. There are a couple of feature branches starting with feature/101 too.
 
 ## How to run?
 
